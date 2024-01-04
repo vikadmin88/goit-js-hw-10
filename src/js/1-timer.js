@@ -130,11 +130,12 @@ const timer = {
   },
 }
 
-const valElemsObj = {};
-valElemsObj.days = document.querySelector("span[data-days]");
-valElemsObj.hours = document.querySelector("span[data-hours]");
-valElemsObj.minutes = document.querySelector("span[data-minutes]");
-valElemsObj.seconds = document.querySelector("span[data-seconds]");
+const valElemsObj = {
+  days: document.querySelector("span[data-days]"),
+  hours: document.querySelector("span[data-hours]"),
+  minutes: document.querySelector("span[data-minutes]"),
+  seconds: document.querySelector("span[data-seconds]")
+};
 
 timer.init(valElemsObj,timerFinishExtFn);
 
