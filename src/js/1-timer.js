@@ -77,7 +77,7 @@ const timer = {
       return;
     }
     this.selectedTime = selectedTime;
-    let timeDelta = selectedTime - Date.now();
+    const timeDelta = selectedTime - Date.now();
     if (timeDelta <= 0) {
       iziToast.error({message: "Please choose a date in the future!"});
       return;
@@ -90,15 +90,14 @@ const timer = {
   },
 
   updateValuesElem() {
-    const tNow = Date.now();
-
-    if (this.selectedTime - tNow <= 0) {
+    const timeDelta = this.selectedTime - Date.now();
+    if (timeDelta <= 0) {
       this.stop();
       this.finishFn();
       return;
     }
 
-    const newTimeObj = this.millisToObj(this.selectedTime - tNow);
+    const newTimeObj = this.millisToObj(timeDelta);
     Object.keys(this.timeObj).forEach(it => {
       if (this.timeObj[it] != newTimeObj[it]) {
         this.timeObj[it] = newTimeObj[it];
@@ -110,7 +109,6 @@ const timer = {
   stop() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
-      console.log("STOP: Clear Interval", this.intervalId);
       this.intervalId = 0;
     }
   },
