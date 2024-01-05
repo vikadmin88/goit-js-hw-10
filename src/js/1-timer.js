@@ -22,11 +22,11 @@ startBtn.addEventListener("click", (e) => {
 
 
 function switchBtn(switcher = "Off") {
-  let isDisabled = startBtn.classList.contains("btn-disabled");
-  if (switcher === "On" && isDisabled) {
+  let isBtnDisabled = startBtn.classList.contains("btn-disabled");
+  if (switcher === "On" && isBtnDisabled) {
     startBtn.classList.remove("btn-disabled");
     inputField.classList.remove("input-disabled");
-  } else if (!isDisabled) {
+  } else if (!isBtnDisabled) {
     startBtn.classList.add("btn-disabled");
     inputField.classList.add("input-disabled");
   }
@@ -63,12 +63,12 @@ const timer = {
   intervalMs: 1000,
   dtObj: {},
   selectedTime: 0,
-  pageElemsObj: {},
+  pageElems: {},
 
-  init(pageElemsObj, finishFn = null) {
-    this.pageElemsObj = pageElemsObj;
-    if (finishFn) {
-      this.finishFn = finishFn;
+  init(pageElemsObj, finishFnc = null) {
+    this.pageElems = pageElemsObj;
+    if (finishFnc) {
+      this.finishFnc = finishFnc;
     }
   },
 
@@ -85,16 +85,16 @@ const timer = {
     }
     this.dtObj = this.millisToObj(timeDelta);
     Object.keys(this.dtObj).forEach(it => {
-        this.pageElemsObj[it].textContent = this.dtObj[it].toString().padStart(2, "0");
+        this.pageElems[it].textContent = this.dtObj[it].toString().padStart(2, "0");
     });
-    this.intervalId = setInterval(() => this.updateValuesElem(), this.intervalMs);
+    this.intervalId = setInterval(() => this.updValues(), this.intervalMs);
   },
 
-  updateValuesElem() {
+  updValues() {
     const timeDelta = this.selectedTime - Date.now();
     if (timeDelta <= 0) {
       this.stop();
-      this.finishFn();
+      this.finishFnc();
       return;
     }
 
@@ -102,7 +102,7 @@ const timer = {
     Object.keys(this.dtObj).forEach(it => {
       if (this.dtObj[it] != newTimeObj[it]) {
         this.dtObj[it] = newTimeObj[it];
-        this.pageElemsObj[it].textContent = newTimeObj[it].toString().padStart(2, "0");
+        this.pageElems[it].textContent = newTimeObj[it].toString().padStart(2, "0");
       }
     });
   },
@@ -126,8 +126,8 @@ const timer = {
     return { days, hours, minutes, seconds };
   },
 
-  finishFn: () => {
-    iziToast.success({message: "FINISH: Object INTERNAL function call!"});
+  finishFnc: () => {
+    iziToast.success({message: "FINISH: Object INTERNAL function invoked!"});
   },
 }
 
@@ -138,12 +138,12 @@ const pageElemsObj = {
   seconds: document.querySelector("span[data-seconds]")
 };
 
-timer.init(pageElemsObj, timerFinishExtFn);
-// can invoke internal finish function of obj timer
+timer.init(pageElemsObj, timerFinishExtFnc);
+// as a variant: can invoke internal "finish" function of obj timer
 // timer.init(pageElemsObj);
 
-function timerFinishExtFn(){
-  iziToast.success({message: "FINISH: EXTERNAL function call!"});
+function timerFinishExtFnc(){
+  iziToast.success({message: "FINISH: EXTERNAL function invoked!"});
 }
 
 

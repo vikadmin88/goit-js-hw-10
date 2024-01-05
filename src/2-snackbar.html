@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/styles.css" />
     <title>Snack Bar</title>
   </head>
@@ -17,23 +17,23 @@
     <section>
       <div class="container">
         <form class="form">
-          <label>
+          <label class="input-delay-label">
             Delay (ms)
-            <input type="number" name="delay" required />
+            <input class="form-input-delay" type="number" name="delay" required />
           </label>
-          <fieldset>
-            <legend>State</legend>
-            <label>
-              <input type="radio" name="state" value="fulfilled" required />
+          <fieldset class="form-fieldset">
+            <legend class="fieldset-legend">State</legend>
+            <label class="input-radio-label">
+              <input class="form-input-radio" type="radio" name="state" value="fulfilled" required />
               Fulfilled
             </label>
-            <label>
-              <input type="radio" name="state" value="rejected" required />
+            <label class="input-radio-label">
+              <input class="form-input-radio" type="radio" name="state" value="rejected" required />
               Rejected
             </label>
           </fieldset>
 
-          <button type="submit">Create notification</button>
+          <button class="form-submit-btn" type="submit">Create notification</button>
         </form>
       </div>
     </section>
