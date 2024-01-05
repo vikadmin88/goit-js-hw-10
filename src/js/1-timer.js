@@ -11,17 +11,26 @@ iziToast.settings({
   transitionOut: "flipOutX"
 });
 
+let selectedTime;
 const inputField = document.querySelector("#datetime-picker");
 const startBtn = document.querySelector("button[data-start]");
+
 startBtn.addEventListener("click", (e) => {
   timer.start(selectedTime);
-  if (!startBtn.classList.contains("btn-disabled")) {
+  switchBtn("On");
+});
+
+
+function switchBtn(switcher = "Off") {
+  let isDisabled = startBtn.classList.contains("btn-disabled");
+  if (switcher === "On" && isDisabled) {
+    startBtn.classList.remove("btn-disabled");
+    inputField.classList.remove("input-disabled");
+  } else if (!isDisabled) {
     startBtn.classList.add("btn-disabled");
     inputField.classList.add("input-disabled");
   }
-});
-
-let selectedTime;
+}
 
 flatpickr("#datetime-picker", {
   enableTime: true,
@@ -35,23 +44,15 @@ flatpickr("#datetime-picker", {
     const stampSel = Date.parse(selectedDates[0]);
 
     if (stampNow < stampSel) {
-      iziToast.success({message: "You have selected a correct date in the future!"});
       selectedTime = stampSel;
-
-      if (startBtn.classList.contains("btn-disabled")) {
-        startBtn.classList.remove("btn-disabled");
-        inputField.classList.remove("input-disabled");
-      }
+      switchBtn("On");
+      iziToast.success({message: "You have selected a correct date in the future!"});
 
     } else {
       timer.stop();
       this.setDate(dtNow);
+      switchBtn("Off");
       iziToast.error({message: "Please choose a date in the future!"});
-
-      if (!startBtn.classList.contains("btn-disabled")) {
-        startBtn.classList.add("btn-disabled");
-        inputField.classList.add("input-disabled");
-      }
     }
   },
 });
@@ -60,12 +61,12 @@ flatpickr("#datetime-picker", {
 const timer = {
   intervalId: null,
   intervalMs: 1000,
-  timeObj: {},
+  dtObj: {},
   selectedTime: 0,
-  valuesElem: {},
+  pageElemsObj: {},
 
-  init(valElemsObj, finishFn = null) {
-    this.valuesElem = valElemsObj;
+  init(pageElemsObj, finishFn = null) {
+    this.pageElemsObj = pageElemsObj;
     if (finishFn) {
       this.finishFn = finishFn;
     }
@@ -73,7 +74,7 @@ const timer = {
 
   start(selectedTime) {
     if (this.intervalId) {
-      iziToast.info({message: "Timer in progress! To restart refresh this page."});
+      iziToast.info({message: "Timer in progress! To restart, refresh this page."});
       return;
     }
     this.selectedTime = selectedTime;
@@ -82,9 +83,9 @@ const timer = {
       iziToast.error({message: "Please choose a date in the future!"});
       return;
     }
-    this.timeObj = this.millisToObj(timeDelta);
-    Object.keys(this.timeObj).forEach(it => {
-        this.valuesElem[it].textContent = this.timeObj[it].toString().padStart(2, "0");
+    this.dtObj = this.millisToObj(timeDelta);
+    Object.keys(this.dtObj).forEach(it => {
+        this.pageElemsObj[it].textContent = this.dtObj[it].toString().padStart(2, "0");
     });
     this.intervalId = setInterval(() => this.updateValuesElem(), this.intervalMs);
   },
@@ -98,10 +99,10 @@ const timer = {
     }
 
     const newTimeObj = this.millisToObj(timeDelta);
-    Object.keys(this.timeObj).forEach(it => {
-      if (this.timeObj[it] != newTimeObj[it]) {
-        this.timeObj[it] = newTimeObj[it];
-        this.valuesElem[it].textContent = newTimeObj[it].toString().padStart(2, "0");
+    Object.keys(this.dtObj).forEach(it => {
+      if (this.dtObj[it] != newTimeObj[it]) {
+        this.dtObj[it] = newTimeObj[it];
+        this.pageElemsObj[it].textContent = newTimeObj[it].toString().padStart(2, "0");
       }
     });
   },
@@ -111,10 +112,6 @@ const timer = {
       clearInterval(this.intervalId);
       this.intervalId = 0;
     }
-  },
-
-  finishFn: () => {
-    iziToast.success({message: "FINISH: INTERNAL function call!"});
   },
 
   millisToObj(ms) {
@@ -128,16 +125,22 @@ const timer = {
     const seconds = Math.floor((((ms % day) % hour) % minute) / second);
     return { days, hours, minutes, seconds };
   },
+
+  finishFn: () => {
+    iziToast.success({message: "FINISH: Object INTERNAL function call!"});
+  },
 }
 
-const valElemsObj = {
+const pageElemsObj = {
   days: document.querySelector("span[data-days]"),
   hours: document.querySelector("span[data-hours]"),
   minutes: document.querySelector("span[data-minutes]"),
   seconds: document.querySelector("span[data-seconds]")
 };
 
-timer.init(valElemsObj,timerFinishExtFn);
+timer.init(pageElemsObj, timerFinishExtFn);
+// can invoke internal finish function of obj timer
+// timer.init(pageElemsObj);
 
 function timerFinishExtFn(){
   iziToast.success({message: "FINISH: EXTERNAL function call!"});
